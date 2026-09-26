@@ -2,6 +2,7 @@ import { Pool } from 'pg';
 import request from 'supertest';
 import { createApp, pgDeps } from '../../src/app';
 import { JwtTokenService } from '../../src/auth/tokenService';
+import { pool as legacyPool } from '../../src/db';
 import { User } from '../../src/domain/types';
 import { aCandidate, aCommissioner, anAdmin, aParty, aVoter } from '../support/builders';
 import { createTestPool, truncateAll } from './support/database';
@@ -27,6 +28,9 @@ describe('election management (component)', () => {
 
   afterAll(async () => {
     await pool.end();
+    // GET /me/candidates is a legacy route using the module-level pool (see Lab 07).
+    // Close it before Testcontainers stops Postgres, or its idle connections crash the run.
+    await legacyPool.end();
   });
 
   describe('POST /parties', () => {
