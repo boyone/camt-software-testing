@@ -38,7 +38,12 @@ pipeline {
       steps {
         dir('app') {
           sh 'npm run typecheck'
-          sh 'npm run test:unit'
+          sh 'npm run test:coverage'
+        }
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: 'app/coverage/**', allowEmptyArchive: true
         }
       }
     }
@@ -46,6 +51,7 @@ pipeline {
     stage('Integration') {
       steps {
         dir('app') {
+          sh 'npm run db:test-rollback'
           sh 'npm run test:integration'
         }
       }

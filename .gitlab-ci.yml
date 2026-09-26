@@ -41,7 +41,10 @@ unit:
   before_script: *npm-install
   script:
     - npm run typecheck
-    - npm run test:unit
+    - npm run test:coverage
+  artifacts:
+    when: always
+    paths: [app/coverage/]
 
 integration:
   stage: integration
@@ -49,6 +52,7 @@ integration:
   variables:
     DATABASE_URL: postgres://election:election@docker:5433/election_test
   script:
+    - npm run db:test-rollback
     - npm run test:integration
 
 e2e:

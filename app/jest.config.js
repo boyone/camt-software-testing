@@ -10,6 +10,13 @@ const tsJest = {
 
 /** @type {import('jest').Config} */
 module.exports = {
+  // Coverage gate only where unit tests are the right tool. Routes and
+  // repositories are covered by component/integration tests instead.
+  collectCoverageFrom: ['src/**/*.ts', '!src/server.ts'],
+  coverageThreshold: {
+    './src/domain/': { statements: 100, branches: 100, functions: 100, lines: 100 },
+    './src/services/': { statements: 75, branches: 70, functions: 90, lines: 80 },
+  },
   projects: [
     {
       displayName: 'unit',

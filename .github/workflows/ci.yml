@@ -22,7 +22,12 @@ jobs:
           cache-dependency-path: app/package-lock.json
       - run: npm ci
       - run: npm run typecheck
-      - run: npm run test:unit
+      - run: npm run test:coverage
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: app/coverage
 
   integration:
     needs: unit
@@ -35,6 +40,8 @@ jobs:
           cache: npm
           cache-dependency-path: app/package-lock.json
       - run: npm ci
+      # update -> rollback everything -> update again: every changeset can be undone.
+      - run: npm run db:test-rollback
       # Starts db-test, runs the Liquibase image, then Jest's integration project.
       - run: npm run test:integration
 
