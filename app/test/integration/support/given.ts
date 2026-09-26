@@ -30,6 +30,17 @@ export function givenFor(pool: Pool) {
     async electionOpenedAt(opensAt: Date): Promise<void> {
       await pool.query('INSERT INTO election (id, opens_at) VALUES (1, $1)', [opensAt]);
     },
+
+    async vote(voter: User, candidate: Candidate): Promise<void> {
+      await pool.query('INSERT INTO votes (voter_id, candidate_id, updated_at) VALUES ($1, $2, now())', [
+        voter.id,
+        candidate.id,
+      ]);
+    },
+
+    async closedPoll(districtId: string, closedAt = new Date()): Promise<void> {
+      await pool.query('UPDATE districts SET closed_at = $2 WHERE id = $1', [districtId, closedAt]);
+    },
   };
 }
 

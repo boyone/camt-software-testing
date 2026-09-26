@@ -21,6 +21,7 @@ function stubDistricts(existing: boolean): DistrictRepository {
   return {
     findAll: vi.fn(),
     findById: vi.fn().mockResolvedValue(existing ? { id: 'CM-1', province: 'เชียงใหม่', number: 1 } : null),
+    markClosed: vi.fn(),
   };
 }
 

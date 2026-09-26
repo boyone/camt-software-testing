@@ -32,7 +32,7 @@ Express + TypeScript 7 + Postgres, schema versioned with Liquibase. Tests run on
 
 - Changelogs: `db/changelog/changes/NNN-*.sql` (Liquibase *formatted SQL*), included in the order listed in `db.changelog-master.yaml`.
 - Every new changelog file must be added to that list by hand — a file that is not listed never runs, and Liquibase reports no error.
-- The master changelog holds a `day1` tag after the schema and before the seed files: `update-to-tag --tag=day1` applies schema only.
+- The master changelog holds a `day1` tag after the Day 1 schema (001–004); later schema files (005+) and the seed files come after it, so `update-to-tag --tag=day1` applies the Day 1 schema only.
 - Never edit a changeset that has already run anywhere — add a new file.
 - `context:dev` changesets are demo data for local development only; `context:e2e` changesets bootstrap the admin/commissioner accounts of the e2e environment. Integration tests run with `--contexts=test`, so they see neither.
 - Liquibase runs from our own image (`db/Dockerfile`, changelog baked in), so the same command works on laptops and on every CI.
