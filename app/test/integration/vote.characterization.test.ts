@@ -4,7 +4,6 @@ import { Pool } from 'pg';
 import request from 'supertest';
 import { createApp, pgDeps } from '../../src/app';
 import { JwtTokenService } from '../../src/auth/tokenService';
-import { pool as legacyPool } from '../../src/db';
 import { Candidate, User } from '../../src/domain/types';
 import { aCandidate, aCommissioner, aParty, aVoter } from '../support/builders';
 import { createTestPool, truncateAll } from './support/database';
@@ -13,7 +12,6 @@ import { authHeaderFor, givenFor } from './support/given';
 const HOUR = 60 * 60 * 1000;
 
 describe('PUT /me/vote (characterization)', () => {
-  // The legacy route verifies tokens itself with process.env.JWT_SECRET (hidden dependency).
   const tokens = new JwtTokenService(process.env.JWT_SECRET!);
   const as = (user: User) => authHeaderFor(tokens, user);
 
@@ -39,8 +37,6 @@ describe('PUT /me/vote (characterization)', () => {
 
   afterAll(async () => {
     await pool.end();
-    // The legacy route queries the module-level pool from src/db.ts, not ours.
-    await legacyPool.end();
   });
 
   async function candidateIn(districtId: string, number = 1): Promise<Candidate> {
