@@ -141,6 +141,31 @@ describe('PUT /me/vote (characterization)', () => {
     expect(res.body).toEqual({ error: 'authentication required' });
   });
 
+  // --- new behaviour (Lab 07 requirement) ---
+
+  it('refuses a vote once the district poll is closed (409)', async () => {
+    await openElection();
+    const candidate = await candidateIn('CM-1');
+    const voter = await given.user(aVoter().inDistrict('CM-1'));
+    await given.closedPoll('CM-1');
+
+    const res = await request(app).put('/me/vote').set(as(voter)).send({ candidateId: candidate.id });
+
+    expect(res.status).toBe(409);
+    expect(res.body).toEqual({ error: 'poll is closed' });
+  });
+
+  it('still accepts votes in a district whose poll is open while another is closed', async () => {
+    await openElection();
+    const candidate = await candidateIn('CM-1');
+    const voter = await given.user(aVoter().inDistrict('CM-1'));
+    await given.closedPoll('CM-2');
+
+    const res = await request(app).put('/me/vote').set(as(voter)).send({ candidateId: candidate.id });
+
+    expect(res.status).toBe(201);
+  });
+
   // --- surprising behaviour, recorded as-is (not fixed in this change) ---
 
   it('treats candidateId 0 as missing (400) because of a truthiness check', async () => {
