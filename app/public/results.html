@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ผลการเลือกตั้ง</title>
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 40rem; padding: 0 1rem; }
+      table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+      th, td { border-bottom: 1px solid #ddd; padding: 0.5rem; text-align: left; }
+      .status { margin-top: 1rem; font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <h1>ผลการเลือกตั้ง</h1>
+
+    <label for="district">เขตเลือกตั้ง</label>
+    <select id="district"></select>
+
+    <p class="status" role="status" id="status"></p>
+    <table id="results" hidden>
+      <thead><tr id="header"></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+
+    <script>
+      const select = document.getElementById('district');
+
+      function el(tag, text) {
+        const node = document.createElement(tag);
+        if (text !== undefined) node.textContent = String(text); // never innerHTML with API data
+        return node;
+      }
+
+      async function loadDistricts() {
+        const districts = await (await fetch('/districts')).json();
+        select.replaceChildren(
+          ...districts.map((d) => {
+            const option = el('option', `${d.province} เขต ${d.number}`);
+            option.value = d.id;
+            return option;
+          }),
+        );
+        const wanted = new URLSearchParams(location.search).get('district');
+        if (wanted) select.value = wanted;
+        await loadResults();
+      }
+
+      async function loadResults() {
+        const results = await (await fetch(`/districts/${encodeURIComponent(select.value)}/results`)).json();
+        const columns = ['หมายเลข', 'ผู้สมัคร', 'พรรค'].concat(results.closed ? ['คะแนน'] : []);
+
+        document.getElementById('status').textContent = results.closed
+          ? `ปิดหีบแล้ว เมื่อ ${new Date(results.closedAt).toLocaleString('th-TH')}`
+          : 'ยังไม่ปิดหีบ — คะแนนจะแสดงหลังปิดหีบ';
+        document.getElementById('header').replaceChildren(...columns.map((c) => el('th', c)));
+        document.getElementById('rows').replaceChildren(
+          ...results.candidates.map((c) => {
+            const cells = [c.number, `${c.firstName} ${c.lastName}`, c.partyName];
+            if (results.closed) cells.push(c.votes);
+            const row = el('tr');
+            row.append(...cells.map((v) => el('td', v)));
+            return row;
+          }),
+        );
+        document.getElementById('results').hidden = false;
+      }
+
+      select.addEventListener('change', loadResults);
+      loadDistricts();
+    </script>
+  </body>
+</html>

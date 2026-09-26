@@ -1,4 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express';
+import path from 'node:path';
 import { Pool } from 'pg';
 import { TokenService } from './auth/tokenService';
 import { Clock, systemClock } from './clock';
@@ -46,6 +47,8 @@ export function createApp(deps: AppDeps) {
 
   const app = express();
   app.use(express.json());
+  // Demo only: a tiny results page for the Playwright browser test.
+  app.use(express.static(path.join(__dirname, '../public')));
 
   app.get('/health', (_req, res) => {
     res.json({ status: 'ok' });
