@@ -9,9 +9,11 @@ test('the commission closes a district poll and its results become public', asyn
   const one = await api.addCandidate(commissioner, 'CM-3', doiSuthep.id, 1);
   const two = await api.addCandidate(commissioner, 'CM-3', maePing.id, 2);
 
+  const voters: string[] = [];
   for (const candidateId of [one.id, one.id, two.id]) {
     const voter = await api.newVoterIn('CM-3');
     expect((await api.vote(voter, candidateId)).status()).toBe(201);
+    voters.push(voter);
   }
 
   const before = await (await api.results('CM-3')).json();
@@ -22,6 +24,9 @@ test('the commission closes a district poll and its results become public', asyn
     headers: { Authorization: `Bearer ${commissioner}` },
   });
   expect(close.status()).toBe(200);
+
+  const lateChange = await api.vote(voters[2], one.id);
+  expect(lateChange.status()).toBe(409);
 
   const after = await (await api.results('CM-3')).json();
   expect(after).toMatchObject({
