@@ -5,6 +5,7 @@ import { CandidateRepository, NewCandidate } from '../../src/repositories/candid
 import { DistrictRepository } from '../../src/repositories/districtRepository';
 import { NewParty, PartyRepository } from '../../src/repositories/partyRepository';
 import { NewUser, UserRepository } from '../../src/repositories/userRepository';
+import { VoteRepository } from '../../src/repositories/voteRepository';
 
 export class InMemoryDistrictRepository implements DistrictRepository {
   constructor(private readonly districts: District[] = []) {}
@@ -15,6 +16,11 @@ export class InMemoryDistrictRepository implements DistrictRepository {
 
   async findById(id: string): Promise<District | null> {
     return this.districts.find((d) => d.id === id) ?? null;
+  }
+
+  async markClosed(id: string, closedAt: Date): Promise<void> {
+    const district = this.districts.find((d) => d.id === id);
+    if (district) district.closedAt = closedAt;
   }
 }
 
@@ -89,5 +95,22 @@ export class InMemoryCandidateRepository implements CandidateRepository {
     const created = { ...candidate, id: this.nextId++, partyName: party.name };
     this.candidates.push(created);
     return created;
+  }
+}
+
+export class InMemoryVoteRepository implements VoteRepository {
+  private readonly votes = new Map<number, { districtId: string; candidateId: number }>();
+
+  /** Test helper: the real system writes votes through the (legacy) vote route. */
+  cast(voterId: number, districtId: string, candidateId: number): void {
+    this.votes.set(voterId, { districtId, candidateId });
+  }
+
+  async countByCandidate(districtId: string): Promise<Map<number, number>> {
+    const tally = new Map<number, number>();
+    for (const vote of this.votes.values()) {
+      if (vote.districtId === districtId) tally.set(vote.candidateId, (tally.get(vote.candidateId) ?? 0) + 1);
+    }
+    return tally;
   }
 }

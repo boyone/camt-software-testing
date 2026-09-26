@@ -11,4 +11,7 @@ export function createTestPool(): Pool {
  */
 export async function truncateAll(pool: Pool): Promise<void> {
   await pool.query('TRUNCATE votes, candidates, parties, users, election RESTART IDENTITY CASCADE');
+  // Reference data that tests can MUTATE must be reset too, or a closed poll
+  // leaks into the next test (only fails when tests run in a certain order!).
+  await pool.query('UPDATE districts SET closed_at = NULL');
 }

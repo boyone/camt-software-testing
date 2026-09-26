@@ -15,6 +15,8 @@ export interface District {
   id: string;
   province: string;
   number: number;
+  /** null while the poll is open */
+  closedAt: Date | null;
 }
 
 export interface Party {
