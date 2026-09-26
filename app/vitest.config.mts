@@ -9,6 +9,17 @@ import { defineConfig } from 'vitest/config';
 // well under a second, and a type error still fails the run.
 export default defineConfig({
   test: {
+    // Coverage gate only where unit tests are the right tool. Routes and
+    // repositories are covered by component/integration tests instead.
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/*.ts'],
+      exclude: ['src/server.ts'],
+      thresholds: {
+        'src/domain/**': { statements: 100, branches: 100, functions: 100, lines: 100 },
+        'src/services/**': { statements: 75, branches: 70, functions: 90, lines: 80 },
+      },
+    },
     projects: [
       {
         test: {
