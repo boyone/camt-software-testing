@@ -19,8 +19,10 @@ git switch vitest/demo/playwright-browser
 cd app && npm ci
 npx playwright install chromium        # ครั้งแรก ~150 MB — ทำก่อนเข้าห้อง
 npm run test:e2e
-npx playwright test e2e/browser --headed --slow-mo=500   # ให้เห็น browser ทำงาน
+SLOW_MO=500 npm run test:e2e -- e2e/browser --headed   # ให้เห็น browser ทำงาน (ช้าลง 500 ms ต่อ action)
 npx playwright show-report             # trace / screenshot เมื่อ test แดง
 ```
+
+รันซ้ำผ่าน `npm run test:e2e` เสมอ — มันสร้าง e2e database ใหม่ทุกครั้ง; `npx playwright test` ตรง ๆ รอบที่ 2 จะได้ 409 (ชื่อพรรคซ้ำ, BKK-1 ปิดหีบไปแล้ว)
 
 ถ้าจะรันใน CI ต้องเพิ่มขั้น `npx playwright install --with-deps chromium` ก่อน `npm run test:e2e`
