@@ -4,9 +4,15 @@ import { defineConfig } from '@playwright/test';
 // container (docker compose "app" service) and we only talk HTTP to it.
 export default defineConfig({
   testDir: './e2e',
-  // HTML report in playwright-report/ — view it with `npx playwright show-report`.
+  // The HTML report (npx playwright show-report) keeps the trace and
+  // screenshot of every failed browser test.
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL: process.env.E2E_BASE_URL ?? 'http://localhost:3000',
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
+    // Playwright has no --slow-mo flag; SLOW_MO=500 slows each browser
+    // action so the room can follow a --headed run.
+    launchOptions: { slowMo: Number(process.env.SLOW_MO ?? 0) },
   },
 });
