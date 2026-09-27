@@ -20,7 +20,7 @@ Workshop: **Software Testing in Real Industry** — hands-on automated testing w
 | **VS Code** | ล่าสุด | https://code.visualstudio.com |
 
 VS Code extensions ที่แนะนำ:
-- **Jest** (`Orta.vscode-jest`) — รัน/ดีบัก test ทีละตัวจาก editor
+- **Vitest** (`vitest.explorer`) — รัน/ดีบัก test ทีละตัวจาก editor
 - **Playwright Test for VS Code** (`ms-playwright.playwright`)
 
 ### หมายเหตุตามระบบปฏิบัติการ

@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { isValidThaiNationalId } from '../../src/domain/thaiNationalId';
 
 describe('isValidThaiNationalId', () => {

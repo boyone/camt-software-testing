@@ -4,7 +4,7 @@
 
 Workshop 2 วัน · CMU CAMT · ส.–อา. 3–4 ตุลาคม 2026 · 09:00–16:30
 
-ฝึกเขียน automated test แบบที่ทีมจริงใช้ บน **ระบบเลือกตั้ง** ฉบับย่อ (Express + TypeScript + PostgreSQL + Liquibase)
+ฝึกเขียน automated test แบบที่ทีมจริงใช้ บน **ระบบเลือกตั้ง** ฉบับย่อ (Express + TypeScript 7 + PostgreSQL + Liquibase)
 ตั้งแต่ unit test ไปจนถึง CI, outside-in และการเอา legacy code เข้า test — แล้วนำไปใช้กับโปรเจกต์ของตัวเอง
 
 ## เริ่มที่นี่
@@ -17,18 +17,19 @@ Workshop 2 วัน · CMU CAMT · ส.–อา. 3–4 ตุลาคม 2026
 ## Branches
 
 ```text
-main                      ระบบอ้างอิง + test infra + CI (+ slides, facilitator guide)
-jest/lab/NN-name          จุดเริ่มต้นของ lab NN — โจทย์อยู่ที่ labs/NN-name/README.md
-jest/solution/NN-name     เฉลย lab NN = จุดเริ่มต้นของ lab NN+1
-demo/testcontainers       demo: integration test บน Testcontainers
-demo/playwright-browser   demo: Playwright ผ่าน browser
+main                             ระบบอ้างอิง + test infra + CI (+ slides, facilitator guide)
+vitest/lab/NN-name               จุดเริ่มต้นของ lab NN — โจทย์อยู่ที่ labs/NN-name/README.md
+vitest/solution/NN-name          เฉลย lab NN = จุดเริ่มต้นของ lab NN+1
+vitest/demo/testcontainers       demo: integration test บน Testcontainers
+vitest/demo/playwright-browser   demo: Playwright ผ่าน browser
+jest/…  ·  demo/…                ชุดเดียวกันบน Jest + TypeScript 6 (ชุดที่สอนใน workshop)
 ```
 
 ตามไม่ทันไม่เป็นไร — ทุก lab เริ่มจากเฉลยของ lab ก่อนหน้า:
 
 ```bash
 git stash -u                         # เก็บงานตัวเอง (-u = รวมไฟล์ใหม่ด้วย)
-git switch jest/lab/06-outside-in    # ไป lab ถัดไปได้ทันที
+git switch vitest/lab/06-outside-in  # ไป lab ถัดไปได้ทันที
 ```
 
 ## โครงสร้าง repo

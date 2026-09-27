@@ -2,16 +2,16 @@
 
 แต่ละ lab มี 2 branch:
 
-- `jest/lab/NN-name` — จุดเริ่มต้นของ lab (โจทย์อยู่ที่ `labs/NN-name/README.md`)
-- `jest/solution/NN-name` — เฉลย และเป็นฐานของ lab ถัดไป
+- `vitest/lab/NN-name` — จุดเริ่มต้นของ lab (โจทย์อยู่ที่ `labs/NN-name/README.md`)
+- `vitest/solution/NN-name` — เฉลย และเป็นฐานของ lab ถัดไป
 
 ```bash
 git fetch --all
-git switch jest/lab/02-aaa-unit          # เริ่ม lab
-git switch jest/solution/02-aaa-unit     # ดูเฉลย / ตามไม่ทัน → ไป lab ถัดไปได้เลย
+git switch vitest/lab/02-aaa-unit        # เริ่ม lab
+git switch vitest/solution/02-aaa-unit   # ดูเฉลย / ตามไม่ทัน → ไป lab ถัดไปได้เลย
 ```
 
-> ตามไม่ทันไม่เป็นไร: `git stash` งานตัวเอง แล้ว `git switch jest/lab/<lab ถัดไป>` ได้ทันที
+> ตามไม่ทันไม่เป็นไร: `git stash` งานตัวเอง แล้ว `git switch vitest/lab/<lab ถัดไป>` ได้ทันที
 > เพราะทุก lab เริ่มจากเฉลยของ lab ก่อนหน้า
 
 | # | Lab | ช่วงเวลา | เรื่อง | Reference |
@@ -26,4 +26,5 @@ git switch jest/solution/02-aaa-unit     # ดูเฉลย / ตามไม�
 | 07 | `07-legacy` | Day 2 บ่าย | Characterization tests, seams, sprout | Working Effectively with Legacy Code |
 | 08 | `08-own-project` | Day 2 บ่าย | นำทุกอย่างไปใช้กับโปรเจกต์ตัวเอง | — |
 
-Vitest version (`vitest/lab/NN-*`, `vitest/solution/NN-*`) จะตามมาหลัง workshop
+Branch ชุดนี้ใช้ **Vitest + TypeScript 7** — ชุดที่สอนใน workshop คือ `jest/lab/NN-*`, `jest/solution/NN-*` (Jest + TypeScript 6)
+โจทย์และเฉลยเหมือนกันทุกข้อ ต่างกันแค่ API ของ test runner → ดู [jest-vs-vitest.md](jest-vs-vitest.md)
