@@ -343,10 +343,30 @@ const voter = await given.user(aVoter().inDistrict('CM-2'));
 Isolation:
 
 - `beforeEach` → `truncateAll(pool)` — ทุก test เริ่มจาก database ว่าง (_Fresh Fixture_)
-- ลองรัน test ไฟล์เดียว, รันซ้ำ, หรือ `--randomize` → ต้องผ่านเหมือนเดิม
+- ลองรัน test ไฟล์เดียว, รันซ้ำ, หรือ `--sequence.shuffle` → ต้องผ่านเหมือนเดิม
   ```bash
   npx vitest run --project integration --sequence.shuffle
   ```
+
+**ทำไม integration ต้องรันทีละไฟล์? (`fileParallelism: false`)**
+
+ปกติ Vitest จะแตก worker หลายตัว (ประมาณตามจำนวน CPU) แล้วรันหลายไฟล์**พร้อมกัน**
+project `integration` ใน `vitest.config.mts` ตั้ง `fileParallelism: false` ไว้แล้ว → รันทีละไฟล์ (เทียบเท่า `--runInBand` ของ Jest หรือ `--no-file-parallelism` บน command line)
+
+ทุกไฟล์ integration ใช้ **database เดียวกัน** (`db-test`) และทุก test เริ่มด้วย `truncateAll(pool)` → ถ้ารันพร้อมกันจะลบข้อมูลของกันและกัน:
+
+```
+worker 1: elections.test.ts              worker 2: register.test.ts
+  truncateAll()
+  insert commissioner
+                                            truncateAll()   ← ลบข้อมูลของ worker 1
+  POST /parties → 401 / 404 ✗
+```
+
+ผลคือ test แดง ๆ เขียว ๆ ตามจังหวะเวลา (_flaky_) ทั้งที่ code ไม่ได้ผิด — รันทีละไฟล์ทำให้แต่ละ test เห็นเฉพาะข้อมูลที่ตัวเอง insert
+
+- project `unit` **ไม่ได้**ตั้ง `fileParallelism: false` — ไม่มี state ร่วมกัน จึงรันขนานได้และเร็วกว่า
+- ราคาที่ต้องจ่าย: ยิ่งไฟล์เยอะยิ่งช้า → ถ้าอยากรันขนาน ต้องให้แต่ละ worker มี database/schema ของตัวเอง (เช่นตั้งชื่อตาม `VITEST_POOL_ID`) หรือใช้ Testcontainers (ดู branch `vitest/demo/testcontainers`)
 
 ## คุยกัน: Shared Fixture (anti-pattern ที่เจอบ่อยมาก)
 
