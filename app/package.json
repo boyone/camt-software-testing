@@ -16,6 +16,7 @@
     "db:up:test": "docker compose up -d --wait db-test",
     "db:migrate:test": "docker compose run --rm --build liquibase update",
     "db:reset:test": "docker compose up -d --force-recreate --wait db-test",
+    "db:schema:test": "docker compose exec db-test psql -U election -d election_test -c \"\\d parties\"",
     "test": "npm run test:unit && npm run test:integration",
     "test:unit": "jest --selectProjects unit",
     "test:integration": "npm run db:up:test && npm run db:migrate:test && jest --selectProjects integration --runInBand",
