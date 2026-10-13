@@ -48,7 +48,7 @@ test('a voter registers and then sees the candidates of their district', async (
     request.get('/me/candidates', { headers: { Authorization: `Bearer ${token}` } }),
   );
 
-  // 5th step: assert the candidates (the ones from test-data.sql)
+  // 5th step: assert the candidates (the ones from 902-e2e-exercise-seed.sql)
   await test.step('voter sees the CM-2 candidates', async () => {
     expect(candidatesRes.status(), await candidatesRes.text()).toBe(200);
     expect(await candidatesRes.json()).toEqual([
