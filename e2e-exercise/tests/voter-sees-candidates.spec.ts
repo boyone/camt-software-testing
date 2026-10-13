@@ -32,18 +32,23 @@ test('a voter registers and then sees the candidates of their district', async (
     expect(user).not.toHaveProperty('passwordHash');
   });
 
-  // 3rd step: voter logs in, then asks the election API for the candidates
-  const candidatesRes = await test.step('voter requests their candidates', async () => {
+  // 3rd step: voter logs in
+  const token = await test.step('voter logs in', async () => {
     const loginRes = await request.post('/auth/login', {
       data: { nationalId: voter.nationalId, password: voter.password },
     });
     expect(loginRes.status(), await loginRes.text()).toBe(200);
     const { token } = await loginRes.json();
-
-    return request.get('/me/candidates', { headers: { Authorization: `Bearer ${token}` } });
+    expect(token).toEqual(expect.any(String));
+    return token;
   });
 
-  // 4th step: assert the candidates (the ones from test-data.sql)
+  // 4th step: voter requests the candidates from the election API
+  const candidatesRes = await test.step('voter requests their candidates', () =>
+    request.get('/me/candidates', { headers: { Authorization: `Bearer ${token}` } }),
+  );
+
+  // 5th step: assert the candidates (the ones from test-data.sql)
   await test.step('voter sees the CM-2 candidates', async () => {
     expect(candidatesRes.status(), await candidatesRes.text()).toBe(200);
     expect(await candidatesRes.json()).toEqual([
