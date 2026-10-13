@@ -26,7 +26,7 @@ test('a voter registers and then sees the candidates of their district', async (
       firstName: voter.firstName,
       lastName: voter.lastName,
       address: voter.address,
-      districtId: 'CM-2',
+      districtId: voter.districtId,
       role: 'VOTER',
     });
     expect(user).not.toHaveProperty('passwordHash');
