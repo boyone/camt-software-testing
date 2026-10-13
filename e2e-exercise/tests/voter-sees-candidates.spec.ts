@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { randomThaiNationalId } from './support/thaiNationalId';
 
 test('a voter registers and then sees the candidates of their district', async ({ request }) => {
+  // Test data owned by this test case only. nationalId came from `node tools/randomThaiNationalId.mjs`.
   const voter = {
-    nationalId: randomThaiNationalId(),
+    nationalId: '9280860332162',
     password: 'voter1234',
     firstName: 'สมชาย',
     lastName: 'ใจดี',
